@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="Generator" content="EditPlus®">
+<meta name="Author" content="">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<style>
+* {
+	margin: 0px;
+	padding: 0px;
+	font-family: "ubuntu-medium", sans-serif;
+	font-size: 14px;
+	color: #515a6e;
+}
+
+body {
+	background-color: #f5f7f9;
+}
+
+table {
+	width: 80%;
+	margin: 10% auto;
+	border-collapse: collapse;
+}
+
+div.center {
+	text-align: center;
+	width: 200px;
+	margin: 5% auto;
+	color: #444;
+}
+
+table, th, td {
+	text-align: center;
+	border: 1px solid #e8eaec;
+}
+
+a {
+	text-align: center;
+	display: block;
+	color: #333;
+	font-family: "ubuntu-medium", sans-serif;
+	text-decoration: none;
+}
+
+a:hover {
+	background-color: #888;
+}
+</style>
+<title>Search Result</title>
+</head>
+<body>
+
+	<div class="center">
+		<strong>搜索结果</strong>
+	</div>
+	<table>
+		<thead>
+			<th>封面</th>
+			<th>书名</th>
+			<th>作者</th>
+			<th>最新章节</th>
+			<th>简介</th>
+		</thead>
+
+		<tbody>
+			<#list bookInfoList as book>
+				<tr>
+					<td><img alt="封面" src="${book.cover_url}"></img></td>
+					<td><a href="/chapter?book_url=${book.book_url}&source_name=${book.source_name}">${book.book_name}</a></td>
+					<td>${book.author}</td>
+					<td><a href="/content?chapter_url=${book.last_chapter_url}&source_name=${book.source_name}&book_url=${book.book_url}">${book.last_chapter_name}</a></td>
+					<td>${book.introduce}</td>
+				</tr>
+			</#list>
+		</tbody>
+	</table>
+
+</body>
+
+<script>
+	
+</script>
+</html>

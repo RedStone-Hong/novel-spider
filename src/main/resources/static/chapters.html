@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="Generator" content="EditPlus®">
+<meta name="Author" content="">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<style>
+* {
+	margin: 0px;
+	padding: 0px;
+	font-family: "ubuntu-medium", sans-serif;
+	font-size:14px;
+	color:#515a6e;
+}
+#list{
+	width:80%;
+	margin:10% auto;
+	font-size:10px;
+}
+#list dd {
+	border-bottom: 1px dashed #CCC;
+	display: inline;
+	float: left;
+	height: 25px;
+	line-height: 200%;
+	margin-bottom: 5px;
+	overflow: hidden;
+	text-align: left;
+	text-indent: 10px;
+	vertical-align: middle;
+	width: 25%;
+}
+a{
+	display:block;
+}
+a:hover{
+	background-color:#ccc;
+	color:#333;
+}
+
+</style>
+<title>Search Result</title>
+</head>
+<body>
+
+	<div id="list">
+	<dl>
+		<#list bookInfo.chapter_list as chapter>
+			<dd><a href="/content?chapter_url=${chapter.chapter_url}&source_name=${bookInfo.source_name}&book_url=${bookInfo.book_url}">${chapter.chapter_name}</a></dd>
+		</#list>
+	</dl>
+	</div>
+</body>
+
+<script>
+	
+</script>
+</html>

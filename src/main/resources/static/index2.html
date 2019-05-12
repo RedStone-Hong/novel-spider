@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="Generator" content="EditPlus®">
+<meta name="Author" content="">
+<meta name="Keywords" content="">
+<meta name="Description" content="">
+<style type="text/css">
+.cover img{
+	width:110px;
+	height:150px;
+	margin-top: 10px;
+}
+
+.novel-item{
+	border: 2px solid #eee;
+	border-radius: 10px;
+	box-shadow: 3px 2px 3px 2px;
+}
+
+.introduce{
+	color:#999;
+}
+
+</style>
+
+<link
+	href="//cdn.staticfile.org/twitter-bootstrap/3.0.1/css/bootstrap.min.css"
+	rel="stylesheet">
+<script type="text/javascript"
+	src="//cdn.staticfile.org/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript"
+	src="//cdn.staticfile.org/jqueryui/1.10.2/jquery-ui.min.js"></script>
+<script type="text/javascript"
+	src="//cdn.staticfile.org/twitter-bootstrap/3.0.1/js/bootstrap.min.js"></script>
+<title>Document</title>
+</head>
+<body>
+	<div id="ajaxHtml" class="container col-md-12 col-lg-12">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="jumbotron">
+				<h1>
+					遇见阅读，爱上阅读 ^_^
+				</h1>
+				<p>
+					以书源为基础的小说爬虫.
+				</p>
+				<p>
+					 <a class="btn btn-primary btn-large" href="#">Learn more</a>
+				</p>
+			</div>
+			<div class="row clearfix">
+				<div class="col-md-2 input-group">
+					<input id="key_word" class="form-control"></input>
+					<span id="searchBtn" class="input-group-addon" style="cursor: pointer;">搜索</span>
+				</div>
+			</div>
+			<br>
+		</div>
+	</div>
+	
+	<div id="novel-list" class="col-md-12">
+		<!-- <div class="novel-item col-md-9">
+			<div class="cover col-md-1">
+				<img alt="封面" src="https://www.xbiquge6.com/cover/78/78513/78513s.jpg">
+			</div>
+			<div class="col-md-1"></div>
+			<div class="col-md-7">
+				<p><h3>元尊</h3></p>
+				<i><h4>作者:天蚕土豆</h4></i>
+				<p class="introduce">天地为炉，万物为铜，阴阳为炭，造化为工。气运之争，蟒雀吞龙。究竟是蟒雀为尊，还是圣龙崛起，凌驾众生？这是气掌乾坤的世界，磅礴宏伟，一气可搬山，可倒海，可翻天，可掌阴阳乾坤。世间源气分九品，三品称玄，六...</p>
+				<p><b>最新章节</b> 第八百八十五章?风与火的对决</p>
+			</div>
+		</div> -->
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+	var bookInfoList;
+	$(document).ready(function() {
+						$("#searchBtn")
+								.click(
+										function() {
+												$.ajax({
+															type : "GET",
+															url : "/search",
+															contentType : 'application/x-www-form-urlencoded;charset=utf-8',
+															data : { "key_word":$("#key_word").val()},
+															dataType : "json",
+															success : function(data) {
+																updateNovelList(data);
+																bookInfoList = data;
+															},
+															error : function(e) {
+																console.log(e);
+															}
+														});
+
+										});
+	});
+	
+	function updateNovelList(data){
+		var html = "";
+		for(var i=0;i<data.length;i++){
+			html += '<div class="novel-item col-md-9">';
+			html += '<div class="cover col-md-1">';
+			html += '<img alt="封面" src="' + data[i].cover_url + '">';
+			html += '</div>';
+			html += '<div class="col-md-1"></div>';
+			html += '<div class="col-md-7">';
+			html += '<p><h3><a href="/book?book_url='+ data[i].book_url +'&source_name='+ data[i].source_name +'">'+ data[i].book_name +'</a></h3></p>';
+			html += '<i><h4><a target="_blank" href="'+  '#' +'">'+ data[i].author +'</a></h4></i>';
+			html += '<p class="introduce">' + data[i].introduce + '</p>';
+			html += '<p><b>最新章节:</b><a target="_blank" href="'+  data[i].last_chapter_url +'">' + data[i].last_chapter_name + '</a></p>';
+			html += '</div>';
+			html += '</div>';
+		}
+		$("#novel-list").html(html);
+	}
+
+</script>
+</html>
