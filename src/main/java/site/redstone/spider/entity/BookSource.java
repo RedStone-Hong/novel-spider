@@ -3,6 +3,7 @@ package site.redstone.spider.entity;
 public class BookSource {
 	private String source_name;//书源名称							
 	private String source_url;//书源地址
+	private boolean key_words_encode;//关键字Encoder
 	private String search_url_rule;//搜索规则
 	private String search_list_rule;//搜索列表规则
 	private String search_list_name_rule;//列表书名规则
@@ -42,6 +43,12 @@ public class BookSource {
 	public void setSource_url(String source_url) {
 		this.source_url = source_url;
 	}
+	public boolean isKey_words_encode() {
+		return key_words_encode;
+	}
+	public void setKey_words_encode(boolean key_words_encode) {
+		this.key_words_encode = key_words_encode;
+	}
 	public String getSearch_url_rule() {
 		return search_url_rule;
 	}
@@ -69,15 +76,13 @@ public class BookSource {
 	public String getSearch_list_last_chapter_name_rule() {
 		return search_list_last_chapter_name_rule;
 	}
-	public void setSearch_list_last_chapter_name_rule(
-			String search_list_last_chapter_name_rule) {
+	public void setSearch_list_last_chapter_name_rule(String search_list_last_chapter_name_rule) {
 		this.search_list_last_chapter_name_rule = search_list_last_chapter_name_rule;
 	}
 	public String getSearch_list_last_chapter_url_rule() {
 		return search_list_last_chapter_url_rule;
 	}
-	public void setSearch_list_last_chapter_url_rule(
-			String search_list_last_chapter_url_rule) {
+	public void setSearch_list_last_chapter_url_rule(String search_list_last_chapter_url_rule) {
 		this.search_list_last_chapter_url_rule = search_list_last_chapter_url_rule;
 	}
 	public String getSearch_list_cover_rule() {
@@ -173,15 +178,13 @@ public class BookSource {
 	public String getContent_last_chapter_url_rule() {
 		return content_last_chapter_url_rule;
 	}
-	public void setContent_last_chapter_url_rule(
-			String content_last_chapter_url_rule) {
+	public void setContent_last_chapter_url_rule(String content_last_chapter_url_rule) {
 		this.content_last_chapter_url_rule = content_last_chapter_url_rule;
 	}
 	public String getContent_next_chapter_url_rule() {
 		return content_next_chapter_url_rule;
 	}
-	public void setContent_next_chapter_url_rule(
-			String content_next_chapter_url_rule) {
+	public void setContent_next_chapter_url_rule(String content_next_chapter_url_rule) {
 		this.content_next_chapter_url_rule = content_next_chapter_url_rule;
 	}
 	public String getContent_chapter_name_rule() {
@@ -198,36 +201,65 @@ public class BookSource {
 	}
 	@Override
 	public String toString() {
-		return "BookSource [source_name=" + source_name + ", source_url="
-				+ source_url + ", search_url_rule=" + search_url_rule
-				+ ", search_list_rule=" + search_list_rule
-				+ ", search_list_name_rule=" + search_list_name_rule
-				+ ", search_list_author_rule=" + search_list_author_rule
-				+ ", search_list_last_chapter_name_rule="
-				+ search_list_last_chapter_name_rule
-				+ ", search_list_last_chapter_url_rule="
-				+ search_list_last_chapter_url_rule
-				+ ", search_list_cover_rule=" + search_list_cover_rule
-				+ ", search_list_book_rule=" + search_list_book_rule
-				+ ", search_list_introduce_rule=" + search_list_introduce_rule
-				+ ", book_name_rule=" + book_name_rule + ", book_cover_rule="
-				+ book_cover_rule + ", book_last_chapter_url_rule="
-				+ book_last_chapter_url_rule + ", book_last_chapter_name_rule="
-				+ book_last_chapter_name_rule + ", book_author_rule="
-				+ book_author_rule + ", book_introduce_rule="
-				+ book_introduce_rule + ", book_chapter_list_url_rule="
-				+ book_chapter_list_url_rule + ", book_chapter_list_rule="
-				+ book_chapter_list_rule + ", book_chapter_url_rule="
-				+ book_chapter_url_rule + ", book_chapter_name_rule="
-				+ book_chapter_name_rule + ", book_content_rule="
-				+ book_content_rule + ", book_next_chapter_list_rule="
-				+ book_next_chapter_list_rule
-				+ ", content_last_chapter_url_rule="
-				+ content_last_chapter_url_rule
-				+ ", content_next_chapter_url_rule="
-				+ content_next_chapter_url_rule
-				+ ", content_chapter_name_rule=" + content_chapter_name_rule
-				+ ", request_method=" + request_method + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("BookSource [source_name=");
+		builder.append(source_name);
+		builder.append(", source_url=");
+		builder.append(source_url);
+		builder.append(", key_words_encode=");
+		builder.append(key_words_encode);
+		builder.append(", search_url_rule=");
+		builder.append(search_url_rule);
+		builder.append(", search_list_rule=");
+		builder.append(search_list_rule);
+		builder.append(", search_list_name_rule=");
+		builder.append(search_list_name_rule);
+		builder.append(", search_list_author_rule=");
+		builder.append(search_list_author_rule);
+		builder.append(", search_list_last_chapter_name_rule=");
+		builder.append(search_list_last_chapter_name_rule);
+		builder.append(", search_list_last_chapter_url_rule=");
+		builder.append(search_list_last_chapter_url_rule);
+		builder.append(", search_list_cover_rule=");
+		builder.append(search_list_cover_rule);
+		builder.append(", search_list_book_rule=");
+		builder.append(search_list_book_rule);
+		builder.append(", search_list_introduce_rule=");
+		builder.append(search_list_introduce_rule);
+		builder.append(", book_name_rule=");
+		builder.append(book_name_rule);
+		builder.append(", book_cover_rule=");
+		builder.append(book_cover_rule);
+		builder.append(", book_last_chapter_url_rule=");
+		builder.append(book_last_chapter_url_rule);
+		builder.append(", book_last_chapter_name_rule=");
+		builder.append(book_last_chapter_name_rule);
+		builder.append(", book_author_rule=");
+		builder.append(book_author_rule);
+		builder.append(", book_introduce_rule=");
+		builder.append(book_introduce_rule);
+		builder.append(", book_chapter_list_url_rule=");
+		builder.append(book_chapter_list_url_rule);
+		builder.append(", book_chapter_list_rule=");
+		builder.append(book_chapter_list_rule);
+		builder.append(", book_chapter_url_rule=");
+		builder.append(book_chapter_url_rule);
+		builder.append(", book_chapter_name_rule=");
+		builder.append(book_chapter_name_rule);
+		builder.append(", book_content_rule=");
+		builder.append(book_content_rule);
+		builder.append(", book_next_chapter_list_rule=");
+		builder.append(book_next_chapter_list_rule);
+		builder.append(", content_last_chapter_url_rule=");
+		builder.append(content_last_chapter_url_rule);
+		builder.append(", content_next_chapter_url_rule=");
+		builder.append(content_next_chapter_url_rule);
+		builder.append(", content_chapter_name_rule=");
+		builder.append(content_chapter_name_rule);
+		builder.append(", request_method=");
+		builder.append(request_method);
+		builder.append("]");
+		return builder.toString();
 	}
 	
 }

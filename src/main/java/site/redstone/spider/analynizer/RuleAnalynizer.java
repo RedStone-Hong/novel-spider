@@ -92,7 +92,7 @@ public interface RuleAnalynizer {
 	 * @param chapter_list_rule
 	 * @param elements
 	 */
-	public void chapterUrlAnalynize(Chapter chapter,Map<String, String> chapter_url_rule,Element element);
+	public void chapterUrlAnalynize(Chapter chapter,Map<String, String> chapter_url_rule,Element element,String prefix);
 	
 	/**
 	 * 章节列表页面url规则解析

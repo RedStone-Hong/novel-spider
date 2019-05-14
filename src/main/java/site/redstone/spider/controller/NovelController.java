@@ -30,9 +30,9 @@ public class NovelController {
 	
 	@RequestMapping(value = "/search",method = RequestMethod.GET)
 	@ResponseBody
-	public ModelAndView searchHtml(HttpServletRequest request, HttpServletResponse response,String key_word,ModelAndView mv) {
+	public ModelAndView searchHtml(HttpServletRequest request, HttpServletResponse response,String key_word,ModelAndView mv,String source_name) {
 		List<BookInfo> bookInfoList = null;
-		AnalynizeEngine engine = AnalynizeEngineFactory.getAnalynizeEngine("笔趣阁");
+		AnalynizeEngine engine = AnalynizeEngineFactory.getAnalynizeEngine(source_name);
 		try {
 			bookInfoList = engine.search(key_word);
 		} catch (Exception e) {
@@ -45,8 +45,8 @@ public class NovelController {
 	
 	
 	@RequestMapping(value = "/chapter")
-	public ModelAndView chapterHtml(HttpServletRequest request, HttpServletResponse response, BookInfo bookInfo,ModelAndView mv) {
-		AnalynizeEngine engine = AnalynizeEngineFactory.getAnalynizeEngine("笔趣阁");
+	public ModelAndView chapterHtml(HttpServletRequest request, HttpServletResponse response, BookInfo bookInfo,ModelAndView mv,String source_name) {
+		AnalynizeEngine engine = AnalynizeEngineFactory.getAnalynizeEngine(source_name);
 		try {
 			bookInfo = engine.chapterListAnalynize(bookInfo);
 		} catch (Exception e) {

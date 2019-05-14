@@ -48,6 +48,12 @@ a {
 a:hover {
 	background-color: #888;
 }
+
+.cover{
+	width:120px;
+	height:160px;
+}
+
 </style>
 <title>Search Result</title>
 </head>
@@ -68,11 +74,11 @@ a:hover {
 		<tbody>
 			<#list bookInfoList as book>
 				<tr>
-					<td><img alt="封面" src="${book.cover_url}"></img></td>
+					<td><img class="cover" alt="封面" src="${book.cover_url!''}"></img></td>
 					<td><a href="/chapter?book_url=${book.book_url}&source_name=${book.source_name}">${book.book_name}</a></td>
 					<td>${book.author}</td>
 					<td><a href="/content?chapter_url=${book.last_chapter_url}&source_name=${book.source_name}&book_url=${book.book_url}">${book.last_chapter_name}</a></td>
-					<td>${book.introduce}</td>
+					<td>${book.introduce!''}</td>
 				</tr>
 			</#list>
 		</tbody>

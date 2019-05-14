@@ -18,7 +18,7 @@ public class DefaultRuleAnalynizer implements RuleAnalynizer{
 
 	@Override
 	public Map<String, String> analynizeRule(String rule,BookSource bookSource) throws Exception {
-		if(null == rule) {
+		if(null == rule || "".equals(rule)) {
 			return null;
 		}
 		Map<String, String> result = new HashMap<String, String>();
@@ -40,8 +40,10 @@ public class DefaultRuleAnalynizer implements RuleAnalynizer{
 				}
 			}
 			if (i == 3) {
-				if(ruleArr[3].equals("this")){
+				if(ruleArr[3].equals("context")){
 					result.put("prefix", bookSource.getSource_url());
+				}else if(ruleArr[3].equals("this")) {
+					result.put("prefix", "this");
 				}else{
 					result.put("prefix", "");
 				}
@@ -96,8 +98,8 @@ public class DefaultRuleAnalynizer implements RuleAnalynizer{
 	}
 
 	@Override
-	public void chapterUrlAnalynize(Chapter chapter, Map<String, String> chapter_url_rule, Element element) {
-		chapter.setChapter_url(commonRuleAnalynize(chapter_url_rule, element));
+	public void chapterUrlAnalynize(Chapter chapter, Map<String, String> chapter_url_rule, Element element,String prefix) {
+		chapter.setChapter_url(commonRuleAnalynize(chapter_url_rule, element,prefix));
 	}
 
 	@Override
@@ -111,7 +113,10 @@ public class DefaultRuleAnalynizer implements RuleAnalynizer{
 		chapter.setChapter_content(commonRuleAnalynize(chapter_content_rule, element));
 	}
 
-	private String commonRuleAnalynize(Map<String, String> rule, Element element){
+	private String commonRuleAnalynize(Map<String, String> rule, Element element,String prefix){
+		if(rule == null) {
+			return null;
+		}
 		String result = null;
 		if (rule.get("method") != null) {
 			if("text".equals(rule.get("method").toString())) {
@@ -124,7 +129,11 @@ public class DefaultRuleAnalynizer implements RuleAnalynizer{
 			result = element.select(rule.get("selector")).get(Integer.valueOf(rule.get("index"))).attr((String) rule.get("attr"));
 		}
 		if(result != null && !"".equals(result)){
-			result = rule.get("prefix") + result;
+			if("this".equals(rule.get("prefix"))) {
+				result = prefix + result;
+			}else {
+				result = rule.get("prefix") + result;
+			}
 		}else{
 			result = null;
 		}
@@ -133,5 +142,9 @@ public class DefaultRuleAnalynizer implements RuleAnalynizer{
 			result = tempStr[Integer.valueOf(rule.get("split_index"))];
 		}
 		return result;
+	}
+	
+	private String commonRuleAnalynize(Map<String, String> rule, Element element){
+		return commonRuleAnalynize(rule,element,null);
 	}
 }

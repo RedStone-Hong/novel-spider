@@ -1,5 +1,6 @@
 package site.redstone.spider.engine;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -122,7 +123,11 @@ public class AnalynizeEngine {
 		// 封装用于返回的书籍信息
 		List<BookInfo> bookInfoList = new ArrayList<BookInfo>();
 		// 替换搜索关键词
-		search_url = search_url.replace("searchKey", searchKey);
+		if(bookSource.isKey_words_encode()) {
+			search_url = search_url.replace("searchKey", URLEncoder.encode(searchKey, "gbk"));
+		}else {
+			search_url = search_url.replace("searchKey", searchKey);
+		}
 		// 分页页码
 		int pageNumber = 1;
 		// 判断结果是否需要分页
@@ -193,7 +198,7 @@ public class AnalynizeEngine {
 		for (Element element : listElements) {
 			Chapter chapter = new Chapter();
 			ruleAnalynizer.chapterNameAnalynize(chapter, rules.get("chapter_name_rule"), element);
-			ruleAnalynizer.chapterUrlAnalynize(chapter, rules.get("chapter_url_rule"), element);
+			ruleAnalynizer.chapterUrlAnalynize(chapter, rules.get("chapter_url_rule"), element,bookInfo.getChapter_list_url());
 			chapterList.add(chapter);
 		}
 		bookInfo.setChapter_list(chapterList);
@@ -207,9 +212,9 @@ public class AnalynizeEngine {
 		ruleAnalynizer.chapterContentAnalynize(chapter, rules.get("chapter_content_rule"), document);
 		ruleAnalynizer.chapterNameAnalynize(chapter, rules.get("content_chapter_name_rule"), document);
 		Chapter last_chapter = new Chapter();
-		ruleAnalynizer.chapterUrlAnalynize(last_chapter, rules.get("content_last_chapter_url_rule"), document);
+		ruleAnalynizer.chapterUrlAnalynize(last_chapter, rules.get("content_last_chapter_url_rule"), document, null);
 		Chapter next_chapter = new Chapter();
-		ruleAnalynizer.chapterUrlAnalynize(next_chapter, rules.get("content_next_chapter_url_rule"), document);
+		ruleAnalynizer.chapterUrlAnalynize(next_chapter, rules.get("content_next_chapter_url_rule"), document, null);
 		chapter.setLast_chapter(last_chapter);
 		chapter.setNext_chapter(next_chapter);
 		return chapter;
@@ -217,15 +222,21 @@ public class AnalynizeEngine {
 	
 	
 	public static void main(String[] args) throws Exception {
-		AnalynizeEngine engine = AnalynizeEngineFactory.getAnalynizeEngine("笔趣阁");
-		//List<BookInfo> bookInfoList = engine.search("天蚕土豆");
-		//BookInfo bookInfo = bookInfoList.get(0);
-		BookInfo bookInfo = new BookInfo();
-		bookInfo.setBook_url("https://www.xbiquge6.com/78_78513/");
+		AnalynizeEngine engine = AnalynizeEngineFactory.getAnalynizeEngine("顶点小说");
+		List<BookInfo> bookInfoList = engine.search("天蚕");
+		BookInfo bookInfo = bookInfoList.get(0);
+		//BookInfo bookInfo = new BookInfo();
+		//bookInfo.setBook_url("https://www.xbiquge6.com/78_78513/");
 		bookInfo = engine.chapterListAnalynize(bookInfo);
 		//Chapter chapter = bookInfo.getChapter_list().get(10);
 		//chapter = engine.chapterContentAnalynize(chapter);
 		System.out.println(bookInfo);
+		//Document doc = UrlUtil.gatherDocument("https://www.x23us.com/modules/article/search.php?searchtype=keywords&searchkey=%CC%EC%B2%CF", "get");
+		//Elements eles = doc.select(".grid tbody tr:not([align=center])");
+		//System.out.println(eles);
+		
+		
+		
 	}
 
 
