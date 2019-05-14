@@ -9,6 +9,8 @@ import java.util.Map;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import site.redstone.spider.analynizer.DefaultRuleAnalynizer;
 import site.redstone.spider.analynizer.RuleAnalynizer;
@@ -19,17 +21,19 @@ import site.redstone.spider.factory.AnalynizeEngineFactory;
 import site.redstone.spider.util.UrlUtil;
 
 public class AnalynizeEngine {
-	
+	private final static Logger logger = LoggerFactory.getLogger(AnalynizeEngine.class); 
 	private RuleAnalynizer ruleAnalynizer;
 	private BookSource bookSource;
 	private Map<String, Map<String,String>> rules = new HashMap<String, Map<String,String>>();
 	
 	public AnalynizeEngine setRuleAnalynizer(RuleAnalynizer ruleAnalynizer) {
+		logger.info("解析引擎解析器初始化,解析器为:" + ruleAnalynizer.getClass().toString());
 		this.ruleAnalynizer = ruleAnalynizer;
 		return this;
 	}
 	
 	public AnalynizeEngine setBookSource(BookSource bookSource) {
+		logger.info("解析引擎书源初始化,书源为:" + bookSource.getSource_name());
 		this.bookSource = bookSource;
 		return this;
 	}
