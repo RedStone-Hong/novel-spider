@@ -108,7 +108,7 @@ public class NovelController {
 		for (Chapter chapter : bookInfo.getChapter_list()) {
 			System.out.println(chapter);
 			sb.append(chapter.getChapter_name() + "\r\n");
-			sb.append(chapter.getChapter_content().replaceAll("<br>", "\r\n").replaceAll("&nbsp;", " "));
+			sb.append(chapter.getChapter_content() == null?"":chapter.getChapter_content().replaceAll("<br>", "\r\n").replaceAll("&nbsp;", " "));
 		}
 		session.removeAttribute(task_key);
 		response.setContentType("application/x-download");
