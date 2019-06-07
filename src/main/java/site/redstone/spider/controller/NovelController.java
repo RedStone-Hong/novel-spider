@@ -1,11 +1,15 @@
 package site.redstone.spider.controller;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import site.redstone.spider.download.DownloadPool;
 import site.redstone.spider.engine.AnalynizeEngine;
 import site.redstone.spider.entity.BookInfo;
 import site.redstone.spider.entity.Chapter;
@@ -72,22 +77,66 @@ public class NovelController {
 		return mv;
 	}
 	
-	@RequestMapping(value = "/download",method = RequestMethod.GET)
-	public void downloadTxt(HttpServletRequest request, HttpServletResponse response, String url,String fileName) {
-		String content = "";	
+	@RequestMapping(value = "/downloadRequest",method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String,String> downloadTxt(HttpServletRequest request, HttpSession session, String url, BookInfo bookInfo, String source_name) {
+		AnalynizeEngine engine = AnalynizeEngineFactory.getAnalynizeEngine(source_name);
 		try {
-			OutputStream os = response.getOutputStream();
-			response.setContentType("text/plain");
-			response.addHeader("Content-Disposition", "attachment;filename=" + fileName + ".txt");
-				os.write(content.getBytes());
-				os.flush();
-				os.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		
+			bookInfo = engine.chapterListAnalynize(bookInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String task_key = DownloadPool.submitTask(null, bookInfo.getChapter_list(), engine);
+		session.setAttribute(task_key, bookInfo);
+		Map<String,String> result = new HashMap<String, String>();
+		result.put("task_key", task_key);
+		return result;
 	}
 	
+	@RequestMapping(value = "/getTaskProgress",method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String,Double> getTaskProgress(HttpServletRequest request, HttpSession session, String task_key) {
+		Map<String,Double> result = new HashMap<String, Double>();
+		result.put("progress", DownloadPool.getPercentage(task_key));
+		return result;
+	}
+	
+	@RequestMapping(value = "/download",method = RequestMethod.GET)
+	public void download(HttpServletRequest request,HttpServletResponse response, HttpSession session, String task_key) {
+		BookInfo bookInfo = (BookInfo) session.getAttribute(task_key);
+		StringBuilder sb = new StringBuilder();
+		for (Chapter chapter : bookInfo.getChapter_list()) {
+			System.out.println(chapter);
+			sb.append(chapter.getChapter_name() + "\r\n");
+			sb.append(chapter.getChapter_content().replaceAll("<br>", "\r\n").replaceAll("&nbsp;", " "));
+		}
+		session.removeAttribute(task_key);
+		response.setContentType("application/x-download");
+		try {
+			response.setHeader("Content-Disposition", "attachment;filename=" + new String(bookInfo.getBook_name().getBytes("utf-8"),"ISO8859-1") + ".txt");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+	    response.setContentLength(sb.toString().getBytes().length);//设置下载内容大小 
+	    BufferedOutputStream output = null;
+	    try {
+			output = new BufferedOutputStream(response.getOutputStream());
+			output.write(sb.toString().getBytes());
+			output.flush();
+			response.flushBuffer();
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    } //  用户可能取消了下载
+	    finally {
+		     if (output != null) {
+		    	try {
+					output.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		     }
+	    }
+	}
 	
 	
 }

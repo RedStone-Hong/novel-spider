@@ -21,8 +21,8 @@ public class AnalynizeEngineFactory {
 			analynizeEngineCache.put(source_name, engine);
 			logger.info("实例化完成,并已添加到引擎缓存中.当前引擎缓存池大小:" + size());
 		}else {
-			logger.info("未获取到相应书源.");
-			return null;
+			logger.info("已获取到相应书源!.");
+			return engine;
 		}
 		return analynizeEngineCache.get(source_name);
 	}

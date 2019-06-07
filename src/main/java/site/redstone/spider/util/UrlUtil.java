@@ -15,7 +15,7 @@ public class UrlUtil {
 		Document document = null;
 		Connection connect = Jsoup.connect(url);
 		Map<String, String> header = new HashMap<String, String>();
-		header.put("Host", "url");
+		header.put("Host", url);
 		header.put("User-Agent", "  Mozilla/5.0 (Windows NT 6.1; WOW64; rv:5.0) Gecko/20100101 Firefox/5.0");
 		header.put("Accept", "  text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		header.put("Accept-Language", "zh-cn,zh;q=0.5");

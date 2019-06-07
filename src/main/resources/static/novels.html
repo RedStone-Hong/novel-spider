@@ -12,11 +12,11 @@
 	padding: 0px;
 	font-family: "ubuntu-medium", sans-serif;
 	font-size: 14px;
-	color: #515a6e;
+	color: #eee;
 }
 
 body {
-	background-color: #f5f7f9;
+	background-color: #242426;
 }
 
 table {
@@ -29,29 +29,39 @@ div.center {
 	text-align: center;
 	width: 200px;
 	margin: 5% auto;
-	color: #444;
+	color: #eee;
 }
 
 table, th, td {
 	text-align: center;
-	border: 1px solid #e8eaec;
+	border: 0px solid #2b2b2d;
+	background-color: #242426;
 }
 
 a {
 	text-align: center;
 	display: block;
-	color: #333;
+	color: #eee;
 	font-family: "ubuntu-medium", sans-serif;
 	text-decoration: none;
 }
 
-a:hover {
+.link:hover {
 	background-color: #888;
+	cursor: pointer;
 }
 
 .cover{
 	width:120px;
 	height:160px;
+}
+
+.disable{
+	opacity:0;
+}
+
+.downBtn{
+
 }
 
 </style>
@@ -64,21 +74,19 @@ a:hover {
 	</div>
 	<table>
 		<thead>
-			<th>封面</th>
 			<th>书名</th>
 			<th>作者</th>
 			<th>最新章节</th>
-			<th>简介</th>
+			<th>操作</th>
 		</thead>
 
 		<tbody>
 			<#list bookInfoList as book>
 				<tr>
-					<td><img class="cover" alt="封面" src="${book.cover_url!''}"></img></td>
-					<td><a href="/chapter?book_url=${book.book_url}&source_name=${book.source_name}">${book.book_name}</a></td>
+					<td class="link"><a href="/chapter?book_url=${book.book_url}&source_name=${book.source_name}">${book.book_name}</a></td>
 					<td>${book.author}</td>
-					<td><a href="/content?chapter_url=${book.last_chapter_url}&source_name=${book.source_name}&book_url=${book.book_url}">${book.last_chapter_name}</a></td>
-					<td>${book.introduce!''}</td>
+					<td class="link"><a href="/content?chapter_url=${book.last_chapter_url}&source_name=${book.source_name}&book_url=${book.book_url}">${book.last_chapter_name}</a></td>
+					<td><a href="javascript:void(0);" onclick="downLoad('${book.book_name}_p','${book.book_url}','${book.source_name}')" class="downBtn">下载</a><progress id="${book.book_name}_p" class="disable" value='0' max='100'>ddd</progress></td>
 				</tr>
 			</#list>
 		</tbody>
@@ -87,6 +95,73 @@ a:hover {
 </body>
 
 <script>
+	function downLoad(progress_id,book_url,source_name){
+		var xmlhttp;
+		if (window.XMLHttpRequest)
+		{
+			//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+			xmlhttp=new XMLHttpRequest();
+		}
+		else
+		{
+			// IE6, IE5 浏览器执行代码
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xmlhttp.onreadystatechange=function()
+		{
+			if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				var resultStr = xmlhttp.responseText;
+				var result = eval('('+resultStr+')');
+				console.log(progress_id);
+				document.getElementById(progress_id).classList.remove("disable");
+				updateProgress(progress_id,result.task_key);
+			}
+		}
+		xmlhttp.open("GET","/downloadRequest?book_url="+ book_url +"&source_name="+ source_name,true);
+		xmlhttp.send();
+	}
 	
+	
+	function updateProgress(progress_id,task_key){
+		var xmlhttp;
+		if (window.XMLHttpRequest)
+		{
+			//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+			xmlhttp=new XMLHttpRequest();
+		}
+		else
+		{
+			// IE6, IE5 浏览器执行代码
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xmlhttp.onreadystatechange=function()
+		{
+			if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				var resultStr = xmlhttp.responseText;
+				var result = eval('('+ resultStr +')');
+				console.log(result.progress);
+				document.getElementById(progress_id).value = result.progress * 100;
+				if(result.progress < 1){
+					 setTimeout(function(){
+						updateProgress(progress_id,task_key);
+					 },500);
+					 console.log(result.progress);
+				}else{
+					document.getElementById(progress_id).classList.add("disable");
+					
+					var el = document.createElement("a");
+					document.body.appendChild(el);
+					el.href = "/download?task_key="+task_key; //url 是你得到的连接
+					el.target = '_new'; //指定在新窗口打开
+					el.click();
+					document.body.removeChild(el);
+				}
+			}
+		}
+		xmlhttp.open("GET","/getTaskProgress?task_key=" + task_key,true);
+		xmlhttp.send();
+	}
 </script>
 </html>

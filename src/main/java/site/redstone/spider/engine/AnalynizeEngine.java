@@ -178,9 +178,20 @@ public class AnalynizeEngine {
 	public BookInfo chapterListAnalynize(BookInfo bookInfo) throws Exception {
 		//规则初始化
 		initRules();
+		int count = 0;
 		List<Chapter> chapterList = new ArrayList<Chapter>();
 		String book_url = bookInfo.getBook_url();
-		Document document = UrlUtil.gatherDocument(book_url,bookSource.getRequest_method());
+		Document document = null;
+		while(count < 3) {
+			try {
+				document = UrlUtil.gatherDocument(book_url,bookSource.getRequest_method());
+				count = 3;
+			}catch(Exception e) {
+				System.out.println(bookInfo);
+				e.printStackTrace();
+				logger.info("章节列表解析失败,重试! count:" + count++);
+			}
+		}
 		/**  封装书籍详情 */
 		ruleAnalynizer.bookNameAnalynize(bookInfo, rules.get("book_name_rule"), document);
 		ruleAnalynizer.bookAuthorAnalynize(bookInfo, rules.get("book_author_rule"), document);
@@ -212,15 +223,23 @@ public class AnalynizeEngine {
 	public Chapter chapterContentAnalynize(Chapter chapter) throws Exception {
 		//规则初始化
 		initRules();
-		Document document = UrlUtil.gatherDocument(chapter.getChapter_url(),bookSource.getRequest_method());
-		ruleAnalynizer.chapterContentAnalynize(chapter, rules.get("chapter_content_rule"), document);
-		ruleAnalynizer.chapterNameAnalynize(chapter, rules.get("content_chapter_name_rule"), document);
-		Chapter last_chapter = new Chapter();
-		ruleAnalynizer.chapterUrlAnalynize(last_chapter, rules.get("content_last_chapter_url_rule"), document, null);
-		Chapter next_chapter = new Chapter();
-		ruleAnalynizer.chapterUrlAnalynize(next_chapter, rules.get("content_next_chapter_url_rule"), document, null);
-		chapter.setLast_chapter(last_chapter);
-		chapter.setNext_chapter(next_chapter);
+		boolean flag = true;
+		while(flag) {
+			try {
+				Document document = UrlUtil.gatherDocument(chapter.getChapter_url(),bookSource.getRequest_method());
+				ruleAnalynizer.chapterContentAnalynize(chapter, rules.get("chapter_content_rule"), document);
+				ruleAnalynizer.chapterNameAnalynize(chapter, rules.get("content_chapter_name_rule"), document);
+				Chapter last_chapter = new Chapter();
+				ruleAnalynizer.chapterUrlAnalynize(last_chapter, rules.get("content_last_chapter_url_rule"), document, null);
+				Chapter next_chapter = new Chapter();
+				ruleAnalynizer.chapterUrlAnalynize(next_chapter, rules.get("content_next_chapter_url_rule"), document, null);
+				chapter.setLast_chapter(last_chapter);
+				chapter.setNext_chapter(next_chapter);
+				flag = false;
+			} catch(Exception e) {
+				logger.info("章节"+ chapter.getChapter_name() + "出现异常,重试!");
+			}
+		}
 		return chapter;
 	}
 	
