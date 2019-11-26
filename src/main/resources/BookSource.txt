@@ -54,7 +54,7 @@
 	"search_list_last_chapter_url_rule": "td a@2@attr:href",
 	"search_list_name_rule": "td@0@text",
 	"search_list_rule": ".grid tbody tr:not([align=center])",
-	"search_url_rule": "https://www.x23us.com/modules/article/search.php?searchtype=keywords&searchkey=searchKey",
+	"search_url_rule": "https://www.x23us.com/modules/article/so.php?searchtype=keywords&searchkey=searchKey",
 	"key_words_encode": true,
 	"source_name": "顶点小说",
 	"source_url": "https://www.x23us.com"
